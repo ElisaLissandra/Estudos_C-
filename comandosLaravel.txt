@@ -1,0 +1,473 @@
+composer create-project laravel/laravel nomedoprojeto ->para criar projeto em laravel
+cd nome do projeto
+php artisan serve
+
+php artisan list -> lista todos os comandos do artisan
+
+dd(); -> serve para olhar td a requisão recebida
+
+Diretiva BLADE
+@yield('nome tag que quer subistituir') ->  substituir conteudo das outras pagina para nao precisar repetir codigo.
+Ex:
+@yield('title') /  @yield('content') 
+@csrf -> direcionar dados para o banco
+@guest-> autentição e convidado
+@auth-> usuario autencicado
+IF(executa se o retorno for true) e ELSE EXEMPLO
+@if(count($fornecedores) > 0 && count($fornecedores) < 10)
+    <h3>Existem alguns fornecedores cadastrados</h3>
+@elseif(count($fornecedores) > 10)
+    <h3>Existem vários fornecedores cadastrados</h3>
+@else
+    <h3>Ainda não existe fornecedores cadastrados</h3>
+@endif
+
+@unless->executa se o retorno for false
+Exemplo:
+@unless($fornecedores[0]['status'] == 's')->false value
+
+@isset-> para saber se uma variavel ou um array estão ou não definidos(retorna true se a variavel estiver definida)
+@if(isset($variavel))
+@endif
+
+@empty->retorna true se a variavel estiver vazia
+Exemplo de variaveis vazias
+-''
+-0
+-0.0
+-'0'
+-null
+-false
+-array()
+-$var(variavel declarada)
+
+@switchcase -> funciona e forma analoga a if/else
+Exemplo:
+  Telefone: ({{ $fornecedores[1]['ddd'] ?? ''}}) {{ $fornecedores[1]['telefone'] ?? ''}}
+    @switch($fornecedores[1]['ddd'])
+        @case('11')
+            São Paulo - SP
+            @break
+        @case('32')
+            Juiz de Fora - MG
+            @break
+        @case('85')
+            Fortaleza -CE
+            @break
+        @default
+            Estado não identificado
+    @endswitch
+
+@For
+EXemplo
+@isset($fornecedores)
+
+    @for($i = 0; isset($fornecedores[$i]); $i++)
+        Fornecedor: {{ $fornecedores[$i]['nome'] }}
+        <br />
+        Status: {{ $fornecedores[$i]['status'] }}
+        <br />
+        CNPJ: {{ $fornecedores[$i]['cnpj'] ?? 'Dado não informado'}}
+        <br />
+        Telefone: ({{ $fornecedores[$i]['ddd'] ?? ''}}) {{ $fornecedores[$i]['telefone'] ?? ''}}
+        <hr />
+    @endfor
+@endisset
+
+@while
+Exemplo
+@isset($fornecedores)
+
+    @php  $i = 0 @endphp
+    @while(isset($fornecedores[$i]))    
+        Fornecedor: {{ $fornecedores[$i]['nome'] }}
+        <br />
+        Status: {{ $fornecedores[$i]['status'] }}
+        <br />
+        CNPJ: {{ $fornecedores[$i]['cnpj'] ?? 'Dado não informado'}}
+        <br />
+        Telefone: ({{ $fornecedores[$i]['ddd'] ?? ''}}) {{ $fornecedores[$i]['telefone'] ?? ''}}
+        @php  $i++ @endphp
+    @endwhile
+@endisset
+
+@foreach-> gera uma copia do array original
+Exemplo:
+@isset($fornecedores)
+    
+    @foreach($fornecedores as $indice => $fornecedor)
+        Fornecedor: {{ $fornecedor['nome'] }}
+        <br />
+        Status: {{ $fornecedor['status'] }}
+        <br />
+        CNPJ: {{ $fornecedor['cnpj'] ?? 'Dado não informado'}}
+        <br />
+        Telefone: ({{ $fornecedor['ddd'] ?? ''}}) {{ $fornecedor['telefone'] ?? ''}}
+       <hr />
+    @endforeach
+@endisset
+
+@forelse->verifica se o array esta ou não vazio.
+@isset($fornecedores)
+    
+    @forelse($fornecedores as $indice => $fornecedor)
+        Fornecedor: {{ $fornecedor['nome'] }}
+        <br />
+        Status: {{ $fornecedor['status'] }}
+        <br />
+        CNPJ: {{ $fornecedor['cnpj'] ?? 'Dado não informado'}}
+        <br />
+        Telefone: ({{ $fornecedor['ddd'] ?? ''}}) {{ $fornecedor['telefone'] ?? ''}}
+       <hr />
+    @empty
+        Não existe fornacedores cadastrados! 
+    @endforelse
+@endisset
+o empty retorna se o array estiver vazio para transmitir uma mensagem.
+
+
+@extends-> posicionada na view que recebe um template
+@section -> para selecionar todo o conteudo para colocar na view, permite tambem o envio de parametro que podem ser formados atravez de variaveis
+@yield-> colocar no tamplete para inserir o conteudo da section
+@include-> para fazer inclusao de uma view parcial
+@component-> inclusão de views dentro de outras views
+
+TAG DE IMPRESSAO BLADE
+@{{ $fornecedores['cnpj'] }}
+
+VARIAVEL LOOP - BLADE 
+exemplo:
+@isset($fornecedores)
+    
+    @forelse($fornecedores as $indice => $fornecedor)
+        Iteração atual: {{ $loop->iteration }}
+        <br />
+        Fornecedor: {{ $fornecedor['nome'] }}
+        <br />
+        Status: {{ $fornecedor['status'] }}
+        <br />
+        CNPJ: {{ $fornecedor['cnpj'] ?? 'Dado não informado'}}
+        <br />
+        Telefone: ({{ $fornecedor['ddd'] ?? ''}}) {{ $fornecedor['telefone'] ?? ''}}
+        <br />
+        @if($loop->first)
+            Primeira iteração do loop
+        @endif
+        @if($loop->last)
+           Última iteração do loop
+
+           <br />
+           Total de registros: {{ $loop->count}}
+        @endif
+       <hr />
+    @empty
+        Não existe fornacedores cadastrados! 
+    @endforelse
+@endisset
+
+
+OPERADOR TERNARIO
+condição ? se verdade : se falso;
+condição ? se verdade : (condicao ? se verdade : se falso);->encadeamento
+Exemplo:
+ $msg = isset($fornecedores[1]['cnpj']) ? 'CNPJ informado' : 'CNPJ não informado';
+ echo $msg;
+
+VALOR DEFAULT
+@isset
+CNPJ: {{ $fornecedores[0]['cnpj'] ?? 'Pode ser um texto ou um string vazia'}}
+@endisset
+retorna default se a varivael testada nao estiver definida (isset faz esse teste) ou
+a variavel testada possui o valor null.
+
+Comando para criar controllers
+php artisan maker: controller nome da entidade a ser criada em singular e a primeira letra maiuscila.
+Ex:
+php artisan maker: controller EventController.
+
+Controlladores com resources
+index()-> Exibir lista de registros -->GET
+create()-> Exibir formulário de criação do registros->GET
+store()-> Receber formulário de criação do registros
+show()-> Exibir registros especificos
+edit()-> Exibir formulário de edição do regristro
+update()-> Receber formulário de edição do registros
+destroy() -> Receber dados para  remoção do registros
+
+php artisan make:controller --resource NomedoCOntroller --model=nomedomodel
+
+Comando para criar migrations
+php artisan migrate -> para conectar no banco
+php artisan make:migration nome da tabela
+ex:
+php artisan make:migration create_products_table
+ºpara ver as condições das migrations 
+php artisan migrate:status
+ºpara rodar o comando migrate novamente e apagar dados antigos
+php artisan migrate:fresh
+ºpara dar rollback
+rollback -> utilizado para voltar uma migration, retira uma coluna
+como utilizar
+$table->dropCollumn('category' coluna para remover);
+terminal  comando
+php artisan migrate:rollback
+php artisan migrate:rollback --step=(numero de passos que quer voltar);
+reset-> para apagar todas as migration 
+php artisan migrate:reset
+refresh-> para voltar todas e rodar as migrate novamente
+php artisan migrate:refresh
+ºpara adicionar categoria na migration
+php artisan make:migration add_category_nomedatabela_table
+ex:
+php artisan make:migration add_category_to_products_table
+
+Modificador Nullable->permite que coluna receba o valor vazio
+Modificador Default-> permite a inclusao de um valor default caso o valor nao seja passado na hora da inserção
+Modificador After->permite que novas colunas sejam inseridas em um ponto especifico de uma tabela preexistente
+
+Migration relacionamento um para um
+Para construir a relação entre as tabelas
+$table->unsignedBigInterger(mesmo tipo do id na outra coluna)('nomedatabela_id');
+implementaçaõ de chave estrangeira
+$table->foreign('nomedatabela_id')->references('id')->on('nomedatabela')
+para dizer se a tabela e unica
+$table->unique('nomedatabala_id);
+
+
+Comando para criar model -> o model se comunica com a tabela do banco
+php artisan make:model nome do model em singular e a primeira letra em maiusculo
+ex: 
+php artisan make:model Event
+
+Eloquent
+Tinker->adicionar registros em seu banco de dados e não tem acesso(interagir com o banco de dados por meio do Tinker).
+1ºcomando-> php artisan tinker
+$nome_do_model = new \App\Models/nome_do_model();
+2ºadiciona registros conforme as colunas do banco de dados.
+Exemplo:
+>>> $contato->nome = 'Jorge';
+=> "Jorge"
+>>> $contato->telefone = '(11) 98888-4444';
+=> "(11) 98888-4444"
+>>> $contato->email = 'jorge@contato.com.br';
+=> "jorge@contato.com.br"
+>>> $contato->motivo_contato = '1';
+=> "1"
+>>> $contato->mensagem = 'Olá, gostaria de mais detalhes sobre o Super Gestão';
+=> "Olá, gostaria de mais detalhes sobre o Super Gestão"4
+3ºResgata as infromações para conferir
+print_r($nome_model->getAttributes());
+exemplo:
+ print_r($contato->getAttributes());
+Array
+(
+    [nome] => Jorge
+    [telefone] => (11) 98888-4444
+    [email] => jorge@contato.com.br
+    [motivo_contato] => 1
+    [mensagem] => Olá, gostaria de mais detalhes sobre o Super Gestão
+)
+4ºComando para salvar
+$nome_model->save();
+exemplo:
+$contato->save();
+5ºexit();-> para sai do tinker
+
+Metodo estatico(nao depende da instancia do objeto)
+antes de utilizar o Create é necessario usar o fillable
+exemplo:
+protected $fillable = ['nome', 'site', 'uf', 'email'];
+CREATE
+Exemplo de como ser utlizando
+\App\Models\Fornecedor::create(['nome'=>'Fornecedor ABC', 'site'=>'fornecedorabc.com.br', 'uf'=>'SP', 'email'=>'contato@fornecedorabc.com.br']);
+
+ALL-> resgata todos os dados do banco
+exemplo de como utilizar
+use \App\Models\Fornecedor;
+>>> $fornecedores = Fornecedor::all();
+
+print_r($fornecedores->toArray()); -> para apresnetar os dados em formato de array
+foreach($fornecedores as $f) { echo $f->nome; echo ' - '; -> recuperar um registro especifico.
+
+FIND-> resgata as primary key
+exemmplo de como utilizar
+$fornecedores2 = Fornecedor::find(2 no caso o id);
+
+WHERE
+operadores de comparção
+>
+>=
+<
+<=
+<>
+like
+Como utilizar
+$nome_model = nome_classe::where('nome_coluna', 'operador_comparação', 'valor'(que pode ser recuperado aparti de uma variavel));
+$contatos = SiteContato::where('id', '>', 1)->get();
+
+WHEREIN-> procura por igualdade(datas, numeros, strings)
+exemplo de como usar
+$contatos = SiteContato::whereIn('campo_a_ser_comparado_por_igualdade', 'conjunto_de_parametro');
+$contatos = SiteContato::whereIn('motivo_contato', [1 , 3]);
+$contatos->get();
+
+WHERENOTIN-> procura o oposto 
+$contatos = SiteContato::whereNotIn('campo_a_ser_comparado_por_diferença', 'conjunto_de_parametro');
+
+WHEREBETWEEN->paramentros passados entre um e outro(datas, numeros) vao passar aqueles que estao entre 3 e 6.
+$contatos = SiteContato::whereBetween('id', [3, 6])->get();
+
+WHERENOTBETWEEN-> vao passar o contrario de whereBetween ou seja vao passar aqueles que nao estao entre 3 e 6.
+$contatos = SiteContato::whereNotBetween('id', [3 , 6])->get();
+
+Registros com dois ou mais wheres
+$contatos = SiteContato::where('nome', '<>', 'Fernando')->whereIn('motivo_contato', [1, 2])->whereBetween('created_at', ['2020-08-01 00:00:00', '2020-08-31 23:59:59'])->get();
+
+ORWHERE-> apenas um dos registros precisa ser verdadeiro para retorna
+ $contatos = SiteContato::where('nome', '<>', 'Fernando')->orWhereIn('motivo_contato', [1,2])->orWhereBetween('created_at', ['2022-02-28 13:24:01', '2022-02-28 13:42:19'])->get();
+
+WHERENULL->retorna parametros com valotes nulos.
+$contatos = SiteContato::whereNull('updated_at')
+$contatos-> get();
+
+WHERENOTNULL->não retorna paramentos com valores nulos.
+$contatos = SiteContato::whereNotNull('updated_at')->get();
+
+WHEREDATE->retorna datas
+$contatos = SiteContato::whereDate('created_at', '2022-02-28')->get();
+
+WHEREDAY->retorna dia
+$contatos = SiteContato::whereDay('created_at', '28')->get();
+
+WHEREMONTH->retorna mes
+$contatos = SiteContato::whereMonth('created_at', '2')->get();
+
+WHEREYEAR->retorna ano
+$contatos = SiteContato::whereYear('created_at', '2022')->get();
+
+WHERETIME->retorna horas
+$contatos = SiteContato::whereTime('created_at', 'Operador de comparação', '13:24:01')->get();
+
+WHERECOLUMN-> comparação de regristros de duas colunas distintas
+$contato = SiteContato::whereColumn('created_at', 'updated_at')->get();
+
+Operadores Lógicos
+select
+      *
+from 
+    site_contatos
+where
+    (nome = 'Jorge' or nome = 'Ana') and motivo_contato in (1, 2) or id between 4 and 6);
+     nome = 'Jorge' or nome = 'Ana' and motivo_contato in (1, 2) or id between 4 and 6;
+    
+
+Tinker
+where('nome', 'Jorge')->orWhere('nome', 'Ana')->WhereIn('motivo_contato', [1, 2])->orWhereBetween('id', [4, 6]);
+$contatos = 
+SiteContato::where(
+	function($query)
+		{ $query->where('nome', 'Jorge')
+		->orWhere('nome', 'Ana'); 
+	}
+)->where(
+	function($query){ 
+		$query->whereIn('motivo_contato', [1, 2])
+		->orWhereBetween('id', [4, 6]); 
+	}
+)->get();
+
+Ordenando Regristros-> a ordenação pode ser ascendente ou descendente
+$contatos = SiteContato::orderBy('nome', 'asc')->get();
+$contatos = SiteContato::orderBy('nome', 'desc')->get();
+$contatos = SiteContato::orderBy('motivo_contato')->orderBy('nome', 'desc')->get();
+
+COLLECTIONS
+first->retorna o primeiro registro da coleção
+1º passo
+ex:
+$contatos = SiteContato::where('id', '>', 3)->get();
+2ºpasso
+$contatos->first(); ->retornara apenas o primeiro regristro do passo 1.
+last->retorna o ultimo elemento do array
+1º passo
+ex:
+$contatos = SiteContato::where('id', '>', 3)->get();
+2ºpasso
+$contatos->last();
+reverse-> terá a ordem representada de forma reversa
+1º passo
+ex:
+$contatos = SiteContato::where('id', '>', 3)->get();
+2ºpasso
+$contatos->reverse();
+
+TOARRY->converte a coleção de um objeto para um array
+ SiteContato::all()->toArray();
+
+TOJSON->converte a coleção de um objeto para um Json
+SiteContato::all()->toJson();
+
+
+Rotas
+index-> para mostrar todos os regristros
+create->para mostrar o formulario de criado no resgristro no banco
+show-> para mostrar um dado especifico
+store->
+
+Autenticação em laravel
+1º instalar o jetstream -> composer require laravel/jetstream
+2º instalar o liveware -> php artisan jetstream:install livewire
+3º ver o status da migration -> php artisan migrate:status
+4º dar start nas migratin -> php artisan migrate
+5º ver o status novamente 
+6º npm install
+7º npm run dev
+
+Comandos artisan 
+php artisan serve --port=nº da porta ->para mudar a porta caso for preciso
+php artisan down -> para pausar a aplicação para fazer manutenção em seguida da o php artisan serve
+php artisan up -> para retornar a aplicação depois da manutenção e em seguida da o php artisan serve
+php artisan route:list -> retorna uma lista das relações das rotas
+
+Verbos HTTP
+get->Utilizado para busca de informação, geralmente a requisição mais otimizada em uma aplicação, e também o método padrão para ‘fazer uma requisição’, quando nenhuma informação adicional é fornecida. 
+post->Método utilizado para envio de dados ao servidor, comumente utilizado para criar registros, envio de mensagens, envio de dados de formulários, além do método GET, é o único método previsto pelas diretrizes do atributo form no HTML 5.
+put->O método PUT é utilizado para um registro já existente, sendo a origem substituída pelo corpo enviado, sempre devendo alterar utilizando todo o corpo enviado.
+patch->Semelhante ao método PUT, porém com propósito de permitir alteração parcial de um registro.
+delete->Utilizado para informar ao servidor que o alvo informado deve ser removido.
+options->Utilizado apenas para troca de informação, não deve possuir nenhuma ação ou iniciar algo, também não deve conter corpo.
+
+Assets-> é o termo utilizado para tudo aquilo para complementar o conteudo front-end como imagens, videos, estilos css, scripts js e entre outras coisas
+
+FORMULARIO
+Action->para onde levar o formulario
+Method-> que metodos usar no formulario como get/post
+
+seeder
+php aretisan make:seeder 
+php artisan db:seed --class=NOMEDACLASSE -> para executar a classe do seed
+
+
+METODOS
+any()-> verifica  o erro e retorna true ou false
+has()-> para verificar dentro do objeto se tem alguma erro relacionado com o paramentro
+response()-> forma um objeto de resposta
+count()-> total de registros por página
+total()-> total de registros da consulta
+firstItem()-> Número do primeiro registro da página
+lastItem()-> Retorna o número do último registro da página
+
+
+MIDDLEWARE
+php artisan make:middleware nome do middleware-> para criar um middleware
+exemplo: php artisan make:middleware LogAcessoMiddleware
+
+ROUTES
+php artisan route:list -> para ter acesso a lista de relação de todas as rotas
+
+composer dump-autoload -> quando der erro na aentrada do php artisan serve
+
+Criar autenticação
+composer require laravel/ui -> o que precisa ser instalado;
+php artisan ui vue --auth
+php artisan migrate
